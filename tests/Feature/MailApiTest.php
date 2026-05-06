@@ -81,3 +81,31 @@ it('rotates api keys without storing the plain value', function (): void {
         ->and($consumer->fresh()->api_key_hash)->toBe(hash('sha256', $newPlainKey))
         ->and($consumer->fresh()->api_key_hash)->not->toBe($newPlainKey);
 });
+
+it('applies a consumer smtp configuration when one is defined', function (): void {
+    $key = ApiConsumer::makeApiKey();
+    $consumer = ApiConsumer::query()->create([
+        'name' => 'SMTP client',
+        'email' => 'smtp-client@example.com',
+        'api_key_hash' => $key['hash'],
+        'api_key_preview' => $key['preview'],
+        'is_active' => true,
+        'rate_limit' => 100,
+        'smtp_mailer' => 'smtp',
+        'smtp_host' => 'smtp.client.test',
+        'smtp_port' => 587,
+        'smtp_username' => 'mailer@client.test',
+        'smtp_password' => 'secret',
+        'smtp_encryption' => 'TLS',
+        'smtp_from_address' => 'from@client.test',
+        'smtp_from_name' => 'Client Mailer',
+    ]);
+
+    $consumer->applySmtpConfig();
+
+    expect($consumer->hasCustomSmtp())->toBeTrue()
+        ->and(config('mail.mailers.smtp.host'))->toBe('smtp.client.test')
+        ->and(config('mail.mailers.smtp.password'))->toBe('secret')
+        ->and(config('mail.mailers.smtp.scheme'))->toBe('tls')
+        ->and(config('mail.from.address'))->toBe('from@client.test');
+});

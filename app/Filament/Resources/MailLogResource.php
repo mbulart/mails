@@ -45,7 +45,7 @@ class MailLogResource extends Resource
                     TextInput::make('recipient')->label('Destinataire')->disabled(),
                     TextInput::make('subject')->label('Sujet')->disabled(),
                     TextInput::make('status')->label('Statut')->disabled(),
-                    TextInput::make('sent_at')->label('Envoyé le')->disabled(),
+                    TextInput::make('sent_at')->label('EnvoyÃ© le')->disabled(),
                 ]),
             Section::make('Payload')
                 ->icon('heroicon-o-code-bracket')
@@ -66,8 +66,8 @@ class MailLogResource extends Resource
                 TextColumn::make('mailType.name')->label('Type')->sortable(),
                 TextColumn::make('apiConsumer.name')->label('Consommateur')->placeholder('Interne'),
                 TextColumn::make('status')->label('Statut')->badge()->sortable(),
-                TextColumn::make('sent_at')->label('Envoyé')->dateTime('d/m/Y H:i')->placeholder('Non envoyé'),
-                TextColumn::make('created_at')->label('Créé')->dateTime('d/m/Y H:i')->sortable(),
+                TextColumn::make('sent_at')->label('EnvoyÃ©')->dateTime('d/m/Y H:i')->placeholder('Non envoyÃ©'),
+                TextColumn::make('created_at')->label('CrÃ©Ã©')->dateTime('d/m/Y H:i')->sortable(),
             ])
             ->filters([
                 SelectFilter::make('status')

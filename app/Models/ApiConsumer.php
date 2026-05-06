@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class ApiConsumer extends Model
@@ -20,6 +19,14 @@ class ApiConsumer extends Model
         'is_active',
         'rate_limit',
         'last_used_at',
+        'smtp_mailer',
+        'smtp_host',
+        'smtp_port',
+        'smtp_username',
+        'smtp_password',
+        'smtp_encryption',
+        'smtp_from_address',
+        'smtp_from_name',
     ];
 
     protected function casts(): array
@@ -28,6 +35,8 @@ class ApiConsumer extends Model
             'is_active' => 'boolean',
             'last_used_at' => 'datetime',
             'rate_limit' => 'integer',
+            'smtp_port' => 'integer',
+            'smtp_password' => 'encrypted',
         ];
     }
 
@@ -76,5 +85,29 @@ class ApiConsumer extends Model
     public function logs(): HasMany
     {
         return $this->hasMany(MailLog::class);
+    }
+
+    public function hasCustomSmtp(): bool
+    {
+        return filled($this->smtp_host);
+    }
+
+    public function applySmtpConfig(): void
+    {
+        if (! $this->hasCustomSmtp()) {
+            return;
+        }
+
+        config([
+            'mail.default' => $this->smtp_mailer ?: 'smtp',
+            'mail.mailers.smtp.transport' => 'smtp',
+            'mail.mailers.smtp.host' => $this->smtp_host,
+            'mail.mailers.smtp.port' => $this->smtp_port ?: 587,
+            'mail.mailers.smtp.username' => $this->smtp_username ?: null,
+            'mail.mailers.smtp.password' => $this->smtp_password ?: null,
+            'mail.mailers.smtp.scheme' => filled($this->smtp_encryption) ? strtolower((string) $this->smtp_encryption) : null,
+            'mail.from.address' => $this->smtp_from_address ?: config('mail.from.address'),
+            'mail.from.name' => $this->smtp_from_name ?: config('mail.from.name'),
+        ]);
     }
 }

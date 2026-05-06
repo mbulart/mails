@@ -39,6 +39,8 @@ class SendMailJob implements ShouldQueue
 
         try {
             MailSetting::applyToConfig();
+            $log->apiConsumer?->applySmtpConfig();
+            Mail::purge('smtp');
 
             $attachments = $this->prepareAttachments($this->attachments);
             $mailable = new DynamicTemplatedMail(

@@ -26,9 +26,9 @@ X-API-KEY: pmk_xxx
 }
 ```
 
-Les piËces jointes supportent les types `local`, `url` et `base64`.
+Les pi√®ces jointes supportent les types `local`, `url` et `base64`.
 
-## RÈponse succËs
+## R√©ponse succ√®s
 
 ```json
 {
@@ -38,7 +38,7 @@ Les piËces jointes supportent les types `local`, `url` et `base64`.
 }
 ```
 
-## RÈponse erreur
+## R√©ponse erreur
 
 ```json
 {
@@ -49,4 +49,7 @@ Les piËces jointes supportent les types `local`, `url` et `base64`.
 
 ## Administration Filament
 
-Le panel est disponible sur `/admin`. Les formulaires sont organisÈs par sections, la page `Settings SMTP` utilise des onglets persistants, et les actions de listes sont regroupÈes dans un menu par ligne.
+Le panel est disponible sur `/admin`. Les formulaires sont organis√©s par sections, la page `Settings SMTP` utilise des onglets persistants, et les actions de listes sont regroup√©es dans un menu par ligne.
+
+Chaque consommateur API peut aussi d√©finir un SMTP d√©di√© depuis sa fiche Filament. Si `Host SMTP` est renseign√©, l'envoi utilise ce SMTP client ; sinon l'application utilise la configuration SMTP globale.
+

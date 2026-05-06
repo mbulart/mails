@@ -41,7 +41,7 @@ class MailTypeResource extends Resource
     {
         return $schema->components([
             Section::make('Informations principales')
-                ->description('Identité fonctionnelle du type d\'email utilisé par l\'API.')
+                ->description('IdentitÃ© fonctionnelle du type d\'email utilisÃ© par l\'API.')
                 ->icon('heroicon-o-identification')
                 ->columns(2)
                 ->schema([
@@ -77,7 +77,7 @@ class MailTypeResource extends Resource
                 TextColumn::make('slug')->label('Slug')->badge()->searchable(),
                 TextColumn::make('templates_count')->label('Templates')->counts('templates')->sortable(),
                 IconColumn::make('is_active')->label('Actif')->boolean(),
-                TextColumn::make('created_at')->label('Créé le')->dateTime('d/m/Y H:i')->sortable(),
+                TextColumn::make('created_at')->label('CrÃ©Ã© le')->dateTime('d/m/Y H:i')->sortable(),
             ])
             ->filters([
                 TernaryFilter::make('is_active')->label('Statut actif'),

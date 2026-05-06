@@ -12,6 +12,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
@@ -35,26 +36,70 @@ class ApiConsumerResource extends Resource
 
     protected static ?string $pluralModelLabel = 'consommateurs API';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Sécurité';
+    protected static string|\UnitEnum|null $navigationGroup = 'SÃ©curitÃ©';
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Identité du consommateur')
+            Section::make('IdentitÃ© du consommateur')
                 ->icon('heroicon-o-user-circle')
                 ->columns(2)
                 ->schema([
                     TextInput::make('name')->label('Nom')->required()->maxLength(255),
                     TextInput::make('email')->label('Email')->email()->required()->maxLength(255),
                 ]),
-            Section::make('Sécurité API')
-                ->description('La clé complète est affichée uniquement à la création ou à la rotation.')
+            Section::make('SÃ©curitÃ© API')
+                ->description('La clÃ© complÃ¨te est affichÃ©e uniquement Ã  la crÃ©ation ou Ã  la rotation.')
                 ->icon('heroicon-o-shield-check')
                 ->columns(3)
                 ->schema([
-                    TextInput::make('api_key_preview')->label('Aperçu clé')->disabled()->dehydrated(false),
+                    TextInput::make('api_key_preview')->label('AperÃ§u clÃ©')->disabled()->dehydrated(false),
                     TextInput::make('rate_limit')->label('Limite/minute')->numeric()->minValue(1)->default(100)->required(),
                     Toggle::make('is_active')->label('Actif')->default(true),
+                ]),
+            Section::make('SMTP dÃ©diÃ© du consommateur')
+                ->description('Si le host SMTP est renseignÃ©, ce consommateur utilisera son propre SMTP Ã  la place du SMTP global.')
+                ->icon('heroicon-o-server-stack')
+                ->columns(2)
+                ->schema([
+                    Select::make('smtp_mailer')
+                        ->label('Mailer')
+                        ->options([
+                            'smtp' => 'SMTP',
+                            'log' => 'Log',
+                            'array' => 'Array',
+                        ])
+                        ->default('smtp'),
+                    TextInput::make('smtp_host')
+                        ->label('Host SMTP')
+                        ->placeholder('mail.example.com'),
+                    TextInput::make('smtp_port')
+                        ->label('Port SMTP')
+                        ->numeric()
+                        ->minValue(1)
+                        ->placeholder('587'),
+                    Select::make('smtp_encryption')
+                        ->label('Encryption')
+                        ->options([
+                            '' => 'Aucune',
+                            'TLS' => 'TLS',
+                            'SSL' => 'SSL',
+                            'tls' => 'TLS',
+                            'ssl' => 'SSL',
+                        ]),
+                    TextInput::make('smtp_username')
+                        ->label('Username SMTP')
+                        ->email(),
+                    TextInput::make('smtp_password')
+                        ->label('Password SMTP')
+                        ->password()
+                        ->revealable()
+                        ->dehydrated(fn (?string $state): bool => filled($state)),
+                    TextInput::make('smtp_from_address')
+                        ->label('Email expÃ©diteur')
+                        ->email(),
+                    TextInput::make('smtp_from_name')
+                        ->label('Nom expÃ©diteur'),
                 ]),
         ]);
     }
@@ -65,10 +110,14 @@ class ApiConsumerResource extends Resource
             ->columns([
                 TextColumn::make('name')->label('Nom')->searchable()->sortable(),
                 TextColumn::make('email')->label('Email')->searchable(),
-                TextColumn::make('api_key_preview')->label('Clé')->badge(),
+                TextColumn::make('api_key_preview')->label('ClÃ©')->badge(),
                 TextColumn::make('rate_limit')->label('Limite/min')->sortable(),
+                IconColumn::make('has_custom_smtp')
+                    ->label('SMTP dÃ©diÃ©')
+                    ->state(fn (ApiConsumer $record): bool => $record->hasCustomSmtp())
+                    ->boolean(),
                 IconColumn::make('is_active')->label('Actif')->boolean(),
-                TextColumn::make('last_used_at')->label('Dernière utilisation')->dateTime('d/m/Y H:i')->placeholder('Jamais')->sortable(),
+                TextColumn::make('last_used_at')->label('DerniÃ¨re utilisation')->dateTime('d/m/Y H:i')->placeholder('Jamais')->sortable(),
             ])
             ->filters([
                 TernaryFilter::make('is_active')->label('Actif'),
@@ -78,7 +127,7 @@ class ApiConsumerResource extends Resource
                     ViewAction::make(),
                     EditAction::make(),
                     Action::make('rotate_key')
-                        ->label('Régénérer la clé')
+                        ->label('RÃ©gÃ©nÃ©rer la clÃ©')
                         ->icon('heroicon-o-arrow-path')
                         ->color('warning')
                         ->requiresConfirmation()
@@ -86,7 +135,7 @@ class ApiConsumerResource extends Resource
                             $plain = $record->rotateApiKey();
 
                             Notification::make()
-                                ->title('Nouvelle clé API générée')
+                                ->title('Nouvelle clÃ© API gÃ©nÃ©rÃ©e')
                                 ->body($plain)
                                 ->success()
                                 ->persistent()

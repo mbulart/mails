@@ -23,9 +23,9 @@ class MailSettingsPage extends Page
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $navigationLabel = 'Settings SMTP';
+    protected static ?string $navigationLabel = 'Settings API & SMTP';
 
-    protected static ?string $title = 'Configuration SMTP';
+    protected static ?string $title = 'Configuration API & SMTP';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Configuration';
 
@@ -45,6 +45,34 @@ class MailSettingsPage extends Page
                 Tabs::make('Sections settings')
                     ->persistTabInQueryString('settings')
                     ->tabs([
+                        Tab::make('Application')
+                            ->icon('heroicon-o-language')
+                            ->schema([
+                                Section::make('Identité de l\'API')
+                                    ->description('Nom affiché, langue et timezone utilisés dynamiquement par Laravel et Filament.')
+                                    ->columns(3)
+                                    ->schema([
+                                        TextInput::make('app_name')
+                                            ->label('Nom de l\'API')
+                                            ->required(),
+                                        Select::make('app_locale')
+                                            ->label('Langue')
+                                            ->options([
+                                                'fr' => 'Français',
+                                                'en' => 'Anglais',
+                                            ])
+                                            ->required(),
+                                        Select::make('app_timezone')
+                                            ->label('Timezone')
+                                            ->searchable()
+                                            ->options([
+                                                'Africa/Kinshasa' => 'Afrique/Kinshasa',
+                                                'UTC' => 'UTC',
+                                                'Europe/Paris' => 'Europe/Paris',
+                                            ])
+                                            ->required(),
+                                    ]),
+                            ]),
                         Tab::make('SMTP')
                             ->icon('heroicon-o-server-stack')
                             ->schema([
@@ -66,6 +94,8 @@ class MailSettingsPage extends Page
                                             ->label('Encryption')
                                             ->options([
                                                 '' => 'Aucune',
+                                                'TLS' => 'TLS',
+                                                'SSL' => 'SSL',
                                                 'tls' => 'TLS',
                                                 'ssl' => 'SSL',
                                             ]),

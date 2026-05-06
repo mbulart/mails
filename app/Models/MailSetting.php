@@ -25,12 +25,15 @@ class MailSetting extends Model
     public static function defaults(): array
     {
         return [
+            'app_name' => config('app.name', 'Mails API'),
+            'app_locale' => config('app.locale', 'fr'),
+            'app_timezone' => config('app.timezone', 'Africa/Kinshasa'),
             'mail_mailer' => config('mail.default', 'smtp'),
             'mail_host' => config('mail.mailers.smtp.host', '127.0.0.1'),
             'mail_port' => (string) config('mail.mailers.smtp.port', 2525),
             'mail_username' => config('mail.mailers.smtp.username'),
             'mail_password' => config('mail.mailers.smtp.password'),
-            'mail_encryption' => config('mail.mailers.smtp.scheme'),
+            'mail_encryption' => env('MAIL_ENCRYPTION', config('mail.mailers.smtp.scheme')),
             'mail_from_address' => config('mail.from.address'),
             'mail_from_name' => config('mail.from.name'),
         ];
@@ -69,13 +72,16 @@ class MailSetting extends Model
         $values ??= self::values();
 
         config([
+            'app.name' => $values['app_name'] ?: 'Mails API',
+            'app.locale' => $values['app_locale'] ?: 'fr',
+            'app.timezone' => $values['app_timezone'] ?: 'Africa/Kinshasa',
             'mail.default' => $values['mail_mailer'] ?: 'smtp',
             'mail.mailers.smtp.transport' => 'smtp',
             'mail.mailers.smtp.host' => $values['mail_host'] ?: '127.0.0.1',
             'mail.mailers.smtp.port' => (int) ($values['mail_port'] ?: 2525),
             'mail.mailers.smtp.username' => $values['mail_username'] ?: null,
             'mail.mailers.smtp.password' => $values['mail_password'] ?: null,
-            'mail.mailers.smtp.scheme' => $values['mail_encryption'] ?: null,
+            'mail.mailers.smtp.scheme' => filled($values['mail_encryption']) ? strtolower((string) $values['mail_encryption']) : null,
             'mail.from.address' => $values['mail_from_address'] ?: 'hello@example.com',
             'mail.from.name' => $values['mail_from_name'] ?: config('app.name'),
         ]);
