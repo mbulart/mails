@@ -110,7 +110,12 @@ class ApiConsumerResource extends Resource
             ->columns([
                 TextColumn::make('name')->label('Nom')->searchable()->sortable(),
                 TextColumn::make('email')->label('Email')->searchable(),
-                TextColumn::make('api_key_preview')->label('Clé')->badge(),
+                TextColumn::make('api_key_preview')
+                    ->label('Clé')
+                    ->badge()
+                    ->copyable()
+                    ->copyMessage('Clé copiée')
+                    ->copyMessageDuration(1500),
                 TextColumn::make('rate_limit')->label('Limite/min')->sortable(),
                 IconColumn::make('has_custom_smtp')
                     ->label('SMTP dédié')
