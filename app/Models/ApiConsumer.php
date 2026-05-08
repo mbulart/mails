@@ -16,6 +16,7 @@ class ApiConsumer extends Model
         'email',
         'api_key_hash',
         'api_key_preview',
+        'api_key_plain',
         'is_active',
         'rate_limit',
         'last_used_at',
@@ -37,6 +38,7 @@ class ApiConsumer extends Model
             'rate_limit' => 'integer',
             'smtp_port' => 'integer',
             'smtp_password' => 'encrypted',
+            'api_key_plain' => 'encrypted',
         ];
     }
 
@@ -77,6 +79,7 @@ class ApiConsumer extends Model
         $this->forceFill([
             'api_key_hash' => $key['hash'],
             'api_key_preview' => $key['preview'],
+            'api_key_plain' => $key['plain'],
         ])->save();
 
         return $key['plain'];

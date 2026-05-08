@@ -36,29 +36,29 @@ class ApiConsumerResource extends Resource
 
     protected static ?string $pluralModelLabel = 'consommateurs API';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Sécurité';
+    protected static string|\UnitEnum|null $navigationGroup = 'S�curit�';
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Identité du consommateur')
+            Section::make('Identit� du consommateur')
                 ->icon('heroicon-o-user-circle')
                 ->columns(2)
                 ->schema([
                     TextInput::make('name')->label('Nom')->required()->maxLength(255),
                     TextInput::make('email')->label('Email')->email()->required()->maxLength(255),
                 ]),
-            Section::make('Sécurité API')
-                ->description('La clé complète est affichée uniquement à la création ou à la rotation.')
+            Section::make('S�curit� API')
+                ->description('La cl� compl�te est affich�e uniquement � la cr�ation ou � la rotation.')
                 ->icon('heroicon-o-shield-check')
                 ->columns(3)
                 ->schema([
-                    TextInput::make('api_key_preview')->label('Aperçu clé')->disabled()->dehydrated(false),
+                    TextInput::make('api_key_preview')->label('Aper�u cl�')->disabled()->dehydrated(false),
                     TextInput::make('rate_limit')->label('Limite/minute')->numeric()->minValue(1)->default(100)->required(),
                     Toggle::make('is_active')->label('Actif')->default(true),
                 ]),
-            Section::make('SMTP dédié du consommateur')
-                ->description('Si le host SMTP est renseigné, ce consommateur utilisera son propre SMTP à la place du SMTP global.')
+            Section::make('SMTP d�di� du consommateur')
+                ->description('Si le host SMTP est renseign�, ce consommateur utilisera son propre SMTP � la place du SMTP global.')
                 ->icon('heroicon-o-server-stack')
                 ->columns(2)
                 ->schema([
@@ -96,10 +96,10 @@ class ApiConsumerResource extends Resource
                         ->revealable()
                         ->dehydrated(fn (?string $state): bool => filled($state)),
                     TextInput::make('smtp_from_address')
-                        ->label('Email expéditeur')
+                        ->label('Email exp�diteur')
                         ->email(),
                     TextInput::make('smtp_from_name')
-                        ->label('Nom expéditeur'),
+                        ->label('Nom exp�diteur'),
                 ]),
         ]);
     }
@@ -111,10 +111,11 @@ class ApiConsumerResource extends Resource
                 TextColumn::make('name')->label('Nom')->searchable()->sortable(),
                 TextColumn::make('email')->label('Email')->searchable(),
                 TextColumn::make('api_key_preview')
-                    ->label('Clé')
+                    ->label('Clé API')
                     ->badge()
-                    ->copyable()
-                    ->copyMessage('Clé copiée')
+                    ->copyable(fn (ApiConsumer $record): bool => filled($record->api_key_plain))
+                    ->copyableState(fn (ApiConsumer $record): ?string => $record->api_key_plain)
+                    ->copyMessage('Clé API complète copiée')
                     ->copyMessageDuration(1500),
                 TextColumn::make('rate_limit')->label('Limite/min')->sortable(),
                 IconColumn::make('has_custom_smtp')
@@ -132,7 +133,7 @@ class ApiConsumerResource extends Resource
                     ViewAction::make(),
                     EditAction::make(),
                     Action::make('rotate_key')
-                        ->label('Régénérer la clé')
+                        ->label('Régénérer la clé API')
                         ->icon('heroicon-o-arrow-path')
                         ->color('warning')
                         ->requiresConfirmation()

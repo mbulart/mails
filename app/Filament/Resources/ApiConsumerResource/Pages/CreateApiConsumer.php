@@ -20,6 +20,7 @@ class CreateApiConsumer extends CreateRecord
 
         $data['api_key_hash'] = $key['hash'];
         $data['api_key_preview'] = $key['preview'];
+        $data['api_key_plain'] = $key['plain'];
 
         return $data;
     }
