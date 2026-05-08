@@ -36,29 +36,29 @@ class ApiConsumerResource extends Resource
 
     protected static ?string $pluralModelLabel = 'consommateurs API';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'S�curit�';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sécurité';
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Identit� du consommateur')
+            Section::make('Identité du consommateur')
                 ->icon('heroicon-o-user-circle')
                 ->columns(2)
                 ->schema([
                     TextInput::make('name')->label('Nom')->required()->maxLength(255),
                     TextInput::make('email')->label('Email')->email()->required()->maxLength(255),
                 ]),
-            Section::make('S�curit� API')
-                ->description('La cl� compl�te est affich�e uniquement � la cr�ation ou � la rotation.')
+            Section::make('Sécurité API')
+                ->description('La clé complète est affichée uniquement à la création ou à la rotation.')
                 ->icon('heroicon-o-shield-check')
                 ->columns(3)
                 ->schema([
-                    TextInput::make('api_key_preview')->label('Aper�u cl�')->disabled()->dehydrated(false),
+                    TextInput::make('api_key_preview')->label('Aperçu clé')->disabled()->dehydrated(false),
                     TextInput::make('rate_limit')->label('Limite/minute')->numeric()->minValue(1)->default(100)->required(),
                     Toggle::make('is_active')->label('Actif')->default(true),
                 ]),
-            Section::make('SMTP d�di� du consommateur')
-                ->description('Si le host SMTP est renseign�, ce consommateur utilisera son propre SMTP � la place du SMTP global.')
+            Section::make('SMTP dédié du consommateur')
+                ->description('Si le host SMTP est renseigné, ce consommateur utilisera son propre SMTP à la place du SMTP global.')
                 ->icon('heroicon-o-server-stack')
                 ->columns(2)
                 ->schema([
@@ -96,10 +96,10 @@ class ApiConsumerResource extends Resource
                         ->revealable()
                         ->dehydrated(fn (?string $state): bool => filled($state)),
                     TextInput::make('smtp_from_address')
-                        ->label('Email exp�diteur')
+                        ->label('Email expéditeur')
                         ->email(),
                     TextInput::make('smtp_from_name')
-                        ->label('Nom exp�diteur'),
+                        ->label('Nom expéditeur'),
                 ]),
         ]);
     }
@@ -111,11 +111,11 @@ class ApiConsumerResource extends Resource
                 TextColumn::make('name')->label('Nom')->searchable()->sortable(),
                 TextColumn::make('email')->label('Email')->searchable(),
                 TextColumn::make('api_key_preview')
-                    ->label('Clé API')
+                    ->label('Clé')
                     ->badge()
-                    ->copyable(fn (ApiConsumer $record): bool => filled($record->api_key_plain))
+                    ->copyable()
                     ->copyableState(fn (ApiConsumer $record): ?string => $record->api_key_plain)
-                    ->copyMessage('Clé API complète copiée')
+                    ->copyMessage('Clé copiée')
                     ->copyMessageDuration(1500),
                 TextColumn::make('rate_limit')->label('Limite/min')->sortable(),
                 IconColumn::make('has_custom_smtp')
@@ -123,7 +123,7 @@ class ApiConsumerResource extends Resource
                     ->state(fn (ApiConsumer $record): bool => $record->hasCustomSmtp())
                     ->boolean(),
                 IconColumn::make('is_active')->label('Actif')->boolean(),
-                TextColumn::make('last_used_at')->label('Dernière utilisation')->dateTime('d/m/Y H:i')->placeholder('Jamais')->sortable(),
+                TextColumn::make('last_used_at')->label('Derni�re utilisation')->dateTime('d/m/Y H:i')->placeholder('Jamais')->sortable(),
             ])
             ->filters([
                 TernaryFilter::make('is_active')->label('Actif'),
@@ -133,7 +133,7 @@ class ApiConsumerResource extends Resource
                     ViewAction::make(),
                     EditAction::make(),
                     Action::make('rotate_key')
-                        ->label('Régénérer la clé API')
+                        ->label('Régénérer la clé')
                         ->icon('heroicon-o-arrow-path')
                         ->color('warning')
                         ->requiresConfirmation()
