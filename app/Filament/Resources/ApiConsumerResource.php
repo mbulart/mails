@@ -110,7 +110,7 @@ class ApiConsumerResource extends Resource
             ->columns([
                 TextColumn::make('name')->label('Nom')->searchable()->sortable(),
                 TextColumn::make('email')->label('Email')->searchable(),
-                TextColumn::make('api_key_preview')
+                TextColumn::make('api_key_plain')
                     ->label('Clé')
                     ->badge()
                     ->copyable()
