@@ -16,7 +16,7 @@ class ApiConsumerSeeder extends Seeder
         $key = ApiConsumer::makeApiKey();
 
         ApiConsumer::query()->create([
-            'name' => 'Consommateur développement',
+            'name' => 'Consommateur dÃ©veloppement',
             'email' => 'dev@example.com',
             'api_key_hash' => $key['hash'],
             'api_key_preview' => $key['preview'],

@@ -48,8 +48,8 @@ class MailSettingsPage extends Page
                         Tab::make('Application')
                             ->icon('heroicon-o-language')
                             ->schema([
-                                Section::make('Identité de l\'API')
-                                    ->description('Nom affiché, langue et timezone utilisés dynamiquement par Laravel et Filament.')
+                                Section::make('IdentitÃ© de l\'API')
+                                    ->description('Nom affichÃ©, langue et timezone utilisÃ©s dynamiquement par Laravel et Filament.')
                                     ->columns(3)
                                     ->schema([
                                         TextInput::make('app_name')
@@ -58,7 +58,7 @@ class MailSettingsPage extends Page
                                         Select::make('app_locale')
                                             ->label('Langue')
                                             ->options([
-                                                'fr' => 'Français',
+                                                'fr' => 'FranÃ§ais',
                                                 'en' => 'Anglais',
                                             ])
                                             ->required(),
@@ -77,7 +77,7 @@ class MailSettingsPage extends Page
                             ->icon('heroicon-o-server-stack')
                             ->schema([
                                 Section::make('Serveur SMTP')
-                                    ->description('Paramètres de connexion au serveur sortant.')
+                                    ->description('ParamÃ¨tres de connexion au serveur sortant.')
                                     ->columns(2)
                                     ->schema([
                                         Select::make('mail_mailer')
@@ -105,21 +105,21 @@ class MailSettingsPage extends Page
                             ->icon('heroicon-o-lock-closed')
                             ->schema([
                                 Section::make('Authentification')
-                                    ->description('Ces valeurs sont stockées chiffrées en base.')
+                                    ->description('Ces valeurs sont stockÃ©es chiffrÃ©es en base.')
                                     ->columns(2)
                                     ->schema([
                                         TextInput::make('mail_username')->label('Username'),
                                         TextInput::make('mail_password')->label('Password')->password()->revealable(),
                                     ]),
                             ]),
-                        Tab::make('Expéditeur')
+                        Tab::make('ExpÃ©diteur')
                             ->icon('heroicon-o-at-symbol')
                             ->schema([
-                                Section::make('Adresse expéditeur')
+                                Section::make('Adresse expÃ©diteur')
                                     ->columns(2)
                                     ->schema([
-                                        TextInput::make('mail_from_address')->label('Email expéditeur')->email()->required(),
-                                        TextInput::make('mail_from_name')->label('Nom expéditeur')->required(),
+                                        TextInput::make('mail_from_address')->label('Email expÃ©diteur')->email()->required(),
+                                        TextInput::make('mail_from_name')->label('Nom expÃ©diteur')->required(),
                                     ]),
                             ]),
                         Tab::make('Tests')
@@ -129,8 +129,8 @@ class MailSettingsPage extends Page
                                     ->description('Sauvegarde, test TCP SMTP et envoi d\'un mail de test.')
                                     ->columns(2)
                                     ->schema([
-                                        TextInput::make('test_email')->label('Email de test')->email()->dehydrated(false),
-                                        Toggle::make('cache_after_save')->label('Recharger la configuration après sauvegarde')->default(true)->dehydrated(false),
+                                        TextInput::make('test_email')->label('Email de test')->email(),
+                                        Toggle::make('cache_after_save')->label('Recharger la configuration aprÃ¨s sauvegarde')->default(true),
                                     ]),
                             ]),
                     ]),
@@ -155,12 +155,11 @@ class MailSettingsPage extends Page
     public function save(): void
     {
         $data = $this->form->getState();
-        unset($data['test_email'], $data['cache_after_save']);
 
         MailSetting::saveValues($data);
 
         Notification::make()
-            ->title('Configuration SMTP sauvegardée')
+            ->title('Configuration SMTP sauvegardÃ©e')
             ->success()
             ->send();
     }
@@ -180,9 +179,9 @@ class MailSettingsPage extends Page
 
             fclose($connection);
 
-            Notification::make()->title('Connexion SMTP réussie')->success()->send();
+            Notification::make()->title('Connexion SMTP rÃ©ussie')->success()->send();
         } catch (Throwable $exception) {
-            Notification::make()->title('Connexion SMTP échouée')->body($exception->getMessage())->danger()->send();
+            Notification::make()->title('Connexion SMTP Ã©chouÃ©e')->body($exception->getMessage())->danger()->send();
         }
     }
 
@@ -198,10 +197,11 @@ class MailSettingsPage extends Page
         }
 
         try {
-            MailSetting::saveValues(collect($data)->except(['test_email', 'cache_after_save'])->all());
-            Mail::raw('Email de test SMTP envoyé depuis Filament.', fn ($message) => $message->to($email)->subject('Test SMTP'));
+            MailSetting::saveValues($data);
+            Mail::purge(config('mail.default'));
+            Mail::raw('Email de test SMTP envoyÃ© depuis Filament.', fn ($message) => $message->to($email)->subject('Test SMTP'));
 
-            Notification::make()->title('Email de test envoyé')->success()->send();
+            Notification::make()->title('Email de test envoyÃ©')->success()->send();
         } catch (Throwable $exception) {
             Notification::make()->title('Envoi impossible')->body($exception->getMessage())->danger()->send();
         }

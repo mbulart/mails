@@ -105,9 +105,18 @@ class ApiConsumer extends Model
             'mail.mailers.smtp.port' => $this->smtp_port ?: 587,
             'mail.mailers.smtp.username' => $this->smtp_username ?: null,
             'mail.mailers.smtp.password' => $this->smtp_password ?: null,
-            'mail.mailers.smtp.scheme' => filled($this->smtp_encryption) ? strtolower((string) $this->smtp_encryption) : null,
+            'mail.mailers.smtp.scheme' => $this->smtpScheme(),
             'mail.from.address' => $this->smtp_from_address ?: config('mail.from.address'),
             'mail.from.name' => $this->smtp_from_name ?: config('mail.from.name'),
         ]);
+    }
+
+    private function smtpScheme(): ?string
+    {
+        return match (strtolower((string) $this->smtp_encryption)) {
+            'ssl', 'smtps' => 'smtps',
+            'tls', 'starttls', 'smtp' => 'smtp',
+            default => null,
+        };
     }
 }

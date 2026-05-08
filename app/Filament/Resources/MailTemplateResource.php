@@ -71,7 +71,7 @@ class MailTemplateResource extends Resource
                         ->rows(6)
                         ->columnSpanFull(),
                 ]),
-            Section::make('Variables supportées')
+            Section::make('Variables supportÃ©es')
                 ->icon('heroicon-o-variable')
                 ->schema([
                     KeyValue::make('variables')
@@ -84,7 +84,7 @@ class MailTemplateResource extends Resource
                 ->icon('heroicon-o-check-badge')
                 ->columns(2)
                 ->schema([
-                    Toggle::make('is_default')->label('Template par défaut'),
+                    Toggle::make('is_default')->label('Template par dÃ©faut'),
                     Toggle::make('is_active')->label('Actif')->default(true),
                 ]),
         ]);
@@ -96,13 +96,13 @@ class MailTemplateResource extends Resource
             ->columns([
                 TextColumn::make('mailType.name')->label('Type')->searchable()->sortable(),
                 TextColumn::make('subject')->label('Sujet')->searchable()->limit(50),
-                IconColumn::make('is_default')->label('Défaut')->boolean(),
+                IconColumn::make('is_default')->label('DÃ©faut')->boolean(),
                 IconColumn::make('is_active')->label('Actif')->boolean(),
-                TextColumn::make('updated_at')->label('Mis à jour')->dateTime('d/m/Y H:i')->sortable(),
+                TextColumn::make('updated_at')->label('Mis a jour')->dateTime('d/m/Y H:i')->sortable(),
             ])
             ->filters([
                 SelectFilter::make('mail_type_id')->label('Type')->relationship('mailType', 'name')->searchable()->preload(),
-                TernaryFilter::make('is_default')->label('Par défaut'),
+                TernaryFilter::make('is_default')->label('Par dÃ©faut'),
                 TernaryFilter::make('is_active')->label('Actif'),
             ])
             ->recordActions([

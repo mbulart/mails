@@ -106,6 +106,6 @@ it('applies a consumer smtp configuration when one is defined', function (): voi
     expect($consumer->hasCustomSmtp())->toBeTrue()
         ->and(config('mail.mailers.smtp.host'))->toBe('smtp.client.test')
         ->and(config('mail.mailers.smtp.password'))->toBe('secret')
-        ->and(config('mail.mailers.smtp.scheme'))->toBe('tls')
+        ->and(config('mail.mailers.smtp.scheme'))->toBe('smtp')
         ->and(config('mail.from.address'))->toBe('from@client.test');
 });

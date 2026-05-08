@@ -14,11 +14,11 @@ class MailStatsOverview extends StatsOverviewWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Emails envoyés', MailLog::query()->where('status', MailLogStatus::Sent)->count())
-                ->description('Total marqués comme envoyés')
+            Stat::make('Emails envoyÃ©s', MailLog::query()->where('status', MailLogStatus::Sent)->count())
+                ->description('Total marquÃ©s comme envoyÃ©s')
                 ->icon('heroicon-o-paper-airplane'),
-            Stat::make('Emails échoués', MailLog::query()->where('status', MailLogStatus::Failed)->count())
-                ->description('À surveiller')
+            Stat::make('Emails Ã©chouÃ©s', MailLog::query()->where('status', MailLogStatus::Failed)->count())
+                ->description('Ã€ surveiller')
                 ->color('danger')
                 ->icon('heroicon-o-exclamation-triangle'),
             Stat::make('Types actifs', MailType::query()->where('is_active', true)->count())

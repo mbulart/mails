@@ -25,7 +25,7 @@ class MailSetting extends Model
     public static function defaults(): array
     {
         return [
-            'app_name' => config('app.name', 'Mails API'),
+            'app_name' => config('app.name', 'Mail API'),
             'app_locale' => config('app.locale', 'fr'),
             'app_timezone' => config('app.timezone', 'Africa/Kinshasa'),
             'mail_mailer' => config('mail.default', 'smtp'),
@@ -36,6 +36,8 @@ class MailSetting extends Model
             'mail_encryption' => env('MAIL_ENCRYPTION', config('mail.mailers.smtp.scheme')),
             'mail_from_address' => config('mail.from.address'),
             'mail_from_name' => config('mail.from.name'),
+            'test_email' => null,
+            'cache_after_save' => '1',
         ];
     }
 
@@ -55,10 +57,12 @@ class MailSetting extends Model
     public static function saveValues(array $values): void
     {
         foreach ($values as $key => $value) {
+            $storedValue = is_bool($value) ? ($value ? '1' : '0') : $value;
+
             self::query()->updateOrCreate(
                 ['key' => $key],
                 [
-                    'value' => filled($value) ? (string) $value : null,
+                    'value' => $storedValue !== null && $storedValue !== '' ? (string) $storedValue : null,
                     'is_secret' => $key === 'mail_password',
                 ],
             );
@@ -72,7 +76,7 @@ class MailSetting extends Model
         $values ??= self::values();
 
         config([
-            'app.name' => $values['app_name'] ?: 'Mails API',
+            'app.name' => $values['app_name'] ?: 'Mail API',
             'app.locale' => $values['app_locale'] ?: 'fr',
             'app.timezone' => $values['app_timezone'] ?: 'Africa/Kinshasa',
             'mail.default' => $values['mail_mailer'] ?: 'smtp',
@@ -81,9 +85,18 @@ class MailSetting extends Model
             'mail.mailers.smtp.port' => (int) ($values['mail_port'] ?: 2525),
             'mail.mailers.smtp.username' => $values['mail_username'] ?: null,
             'mail.mailers.smtp.password' => $values['mail_password'] ?: null,
-            'mail.mailers.smtp.scheme' => filled($values['mail_encryption']) ? strtolower((string) $values['mail_encryption']) : null,
+            'mail.mailers.smtp.scheme' => self::smtpScheme($values['mail_encryption'] ?? null),
             'mail.from.address' => $values['mail_from_address'] ?: 'hello@example.com',
             'mail.from.name' => $values['mail_from_name'] ?: config('app.name'),
         ]);
+    }
+
+    private static function smtpScheme(?string $encryption): ?string
+    {
+        return match (strtolower((string) $encryption)) {
+            'ssl', 'smtps' => 'smtps',
+            'tls', 'starttls', 'smtp' => 'smtp',
+            default => null,
+        };
     }
 }
