@@ -53,7 +53,7 @@ class ApiConsumerResource extends Resource
                 ->icon('heroicon-o-shield-check')
                 ->columns(3)
                 ->schema([
-                    TextInput::make('api_key_preview')->label('Aperçu clé')->disabled()->dehydrated(false),
+                    TextInput::make('api_key_plain')->label('Aperçu clé')->dehydrated(false),
                     TextInput::make('rate_limit')->label('Limite/minute')->numeric()->minValue(1)->default(100)->required(),
                     Toggle::make('is_active')->label('Actif')->default(true),
                 ]),
