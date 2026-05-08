@@ -123,7 +123,7 @@ class ApiConsumerResource extends Resource
                     ->state(fn (ApiConsumer $record): bool => $record->hasCustomSmtp())
                     ->boolean(),
                 IconColumn::make('is_active')->label('Actif')->boolean(),
-                TextColumn::make('last_used_at')->label('Derni�re utilisation')->dateTime('d/m/Y H:i')->placeholder('Jamais')->sortable(),
+                TextColumn::make('last_used_at')->label('Dernière utilisation')->dateTime('d/m/Y H:i')->placeholder('Jamais')->sortable(),
             ])
             ->filters([
                 TernaryFilter::make('is_active')->label('Actif'),
