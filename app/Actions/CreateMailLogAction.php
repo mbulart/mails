@@ -10,7 +10,10 @@ use App\Models\MailTemplate;
 
 class CreateMailLogAction
 {
-    public function execute(MailTemplate $template, MailSendData $data, string $recipient, ?ApiConsumer $consumer, string $subject): MailLog
+    /**
+     * @param  array<string, mixed>  $resolvedVariables
+     */
+    public function execute(MailTemplate $template, MailSendData $data, string $recipient, ?ApiConsumer $consumer, string $subject, array $resolvedVariables): MailLog
     {
         return MailLog::query()->create([
             'api_consumer_id' => $consumer?->id,
@@ -22,7 +25,7 @@ class CreateMailLogAction
                 'to' => $data->to,
                 'cc' => $data->cc,
                 'bcc' => $data->bcc,
-                'variables' => $data->variables,
+                'variables' => $resolvedVariables,
                 'attachments' => $data->attachments,
             ],
             'status' => MailLogStatus::Queued,

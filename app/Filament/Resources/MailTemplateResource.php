@@ -7,6 +7,8 @@ use App\Filament\Resources\MailTemplateResource\Pages\EditMailTemplate;
 use App\Filament\Resources\MailTemplateResource\Pages\ListMailTemplates;
 use App\Filament\Resources\MailTemplateResource\Pages\ViewMailTemplate;
 use App\Models\MailTemplate;
+use App\Services\TemplateRenderer;
+use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -19,6 +21,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -71,7 +74,7 @@ class MailTemplateResource extends Resource
                         ->rows(6)
                         ->columnSpanFull(),
                 ]),
-            Section::make('Variables supportées')
+            Section::make('Variables supportees')
                 ->icon('heroicon-o-variable')
                 ->schema([
                     KeyValue::make('variables')
@@ -84,7 +87,7 @@ class MailTemplateResource extends Resource
                 ->icon('heroicon-o-check-badge')
                 ->columns(2)
                 ->schema([
-                    Toggle::make('is_default')->label('Template par défaut'),
+                    Toggle::make('is_default')->label('Template par defaut'),
                     Toggle::make('is_active')->label('Actif')->default(true),
                 ]),
         ]);
@@ -96,17 +99,31 @@ class MailTemplateResource extends Resource
             ->columns([
                 TextColumn::make('mailType.name')->label('Type')->searchable()->sortable(),
                 TextColumn::make('subject')->label('Sujet')->searchable()->limit(50),
-                IconColumn::make('is_default')->label('Défaut')->boolean(),
+                IconColumn::make('is_default')->label('Defaut')->boolean(),
                 IconColumn::make('is_active')->label('Actif')->boolean(),
                 TextColumn::make('updated_at')->label('Mis a jour')->dateTime('d/m/Y H:i')->sortable(),
             ])
             ->filters([
                 SelectFilter::make('mail_type_id')->label('Type')->relationship('mailType', 'name')->searchable()->preload(),
-                TernaryFilter::make('is_default')->label('Par défaut'),
+                TernaryFilter::make('is_default')->label('Par defaut'),
                 TernaryFilter::make('is_active')->label('Actif'),
             ])
             ->recordActions([
                 ActionGroup::make([
+                    Action::make('previewHtml')
+                        ->label('Previsualiser HTML')
+                        ->icon('heroicon-o-eye')
+                        ->color('gray')
+                        ->modalHeading('Previsualisation HTML')
+                        ->modalWidth(Width::SevenExtraLarge)
+                        ->modalSubmitAction(false)
+                        ->modalCancelActionLabel('Fermer')
+                        ->modalContent(function (MailTemplate $record) {
+                            $samples = MailTemplate::previewSampleVariables($record->variables);
+                            $html = app(TemplateRenderer::class)->render($record->html_content, $samples);
+
+                            return view('filament.mail-template-html-preview', ['html' => $html]);
+                        }),
                     ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),

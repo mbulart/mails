@@ -44,14 +44,19 @@ class SendTemplatedMailAction
 
         $this->validateMailVariables->execute($template, $data->variables);
 
-        $subject = app(TemplateRenderer::class)->render($template->subject, $data->variables);
+        $variables = $data->variables;
+        if ($consumer?->hasCustomSmtp()) {
+            $variables['app_name'] = $consumer->name;
+        }
+
+        $subject = app(TemplateRenderer::class)->render($template->subject, $variables);
         $logIds = [];
 
         foreach ($data->to as $recipient) {
-            $log = $this->createMailLog->execute($template, $data, $recipient, $consumer, $subject);
+            $log = $this->createMailLog->execute($template, $data, $recipient, $consumer, $subject, $variables);
             $logIds[] = $log->id;
 
-            SendMailJob::dispatch($log->id, $template->id, $data->variables, $data->cc, $data->bcc, $data->attachments);
+            SendMailJob::dispatch($log->id, $template->id, $variables, $data->cc, $data->bcc, $data->attachments);
         }
 
         return $logIds;
