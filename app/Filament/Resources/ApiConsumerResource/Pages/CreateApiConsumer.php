@@ -28,10 +28,10 @@ class CreateApiConsumer extends CreateRecord
     protected function afterCreate(): void
     {
         Notification::make()
-            ->title('Clé API générée')
+            ->title('ClÃ© API gÃ©nÃ©rÃ©e')
             ->body((string) $this->plainApiKey)
-            ->success()
-            ->persistent()
-            ->send();
+                ->success()
+                ->persistent()
+                ->send();
+        }
     }
-}
