@@ -1,5 +1,11 @@
 @php
     $previewHtml = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', (string) $html) ?? (string) $html;
+    $previewHtml = preg_replace(
+        '/<\/head>/i',
+        '<style>.wrapper{padding:0 !important;}.card{max-width:100% !important;margin:0 !important;border-radius:0 !important;box-shadow:none !important;}</style></head>',
+        $previewHtml,
+        1,
+    ) ?? $previewHtml;
     $previewSrc = 'data:text/html;charset=utf-8;base64,'.base64_encode($previewHtml);
 @endphp
 
