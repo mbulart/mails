@@ -109,9 +109,9 @@ class MailTemplateResource extends Resource
             ->recordActions([
                 ActionGroup::make([
                     Action::make('preview_html')
-                        ->label('Prévisualiser HTML')
+                        ->label('PrÃ©visualiser HTML')
                         ->icon('heroicon-o-eye')
-                        ->modalHeading('Prévisualisation du template')
+                        ->modalHeading('PrÃ©visualisation du template')
                         ->modalSubmitAction(false)
                         ->modalCancelActionLabel('Fermer')
                         ->modalWidth('7xl')
