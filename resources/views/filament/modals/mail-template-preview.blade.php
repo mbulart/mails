@@ -1,3 +1,7 @@
+@php
+    $previewHtml = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', (string) $html) ?? (string) $html;
+@endphp
+
 <div class="space-y-4">
     <div>
         <p class="text-sm text-gray-500">Sujet</p>
@@ -8,7 +12,7 @@
         <iframe
             class="h-[70vh] w-full rounded-lg"
             sandbox="allow-same-origin"
-            srcdoc="{{ e($html) }}"
+            srcdoc="{{ e($previewHtml) }}"
             title="Prévisualisation HTML du template"
         ></iframe>
     </div>
