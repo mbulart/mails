@@ -31,7 +31,7 @@ class ViewMailTemplate extends ViewRecord
                         $samples = MailTemplate::previewSampleVariables($record->variables);
                         $html = app(TemplateRenderer::class)->render($record->html_content, $samples);
 
-                        return view('filament.mail-template-html-preview', ['html' => $html]);
+                        return view('filament.modals.mail-template-preview', ['subject' => $record->subject, 'html' => $html]);
                     }),
             ],
             parent::getHeaderActions(),

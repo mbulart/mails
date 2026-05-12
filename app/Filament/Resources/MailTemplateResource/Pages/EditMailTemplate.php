@@ -34,7 +34,7 @@ class EditMailTemplate extends EditRecord
                         $samples = MailTemplate::previewSampleVariables(is_array($variables) ? $variables : []);
                         $html = app(TemplateRenderer::class)->render((string) $htmlContent, $samples);
 
-                        return view('filament.mail-template-html-preview', ['html' => $html]);
+                        return view('filament.modals.mail-template-preview', ['subject' => $record->subject, 'html' => $html]);
                     }),
             ],
             parent::getHeaderActions(),
