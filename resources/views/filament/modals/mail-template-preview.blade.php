@@ -18,7 +18,7 @@
     <div class="rounded-lg border border-gray-200 bg-white">
         <iframe
             class="h-[70vh] w-full rounded-lg"
-            sandbox="allow-same-origin"
+            sandbox="allow-same-origin allow-scripts"
             src="{{ $previewSrc }}"
             title="Prévisualisation HTML du template"
         ></iframe>
