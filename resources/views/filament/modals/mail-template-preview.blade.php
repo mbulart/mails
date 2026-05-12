@@ -1,5 +1,6 @@
 @php
     $previewHtml = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', (string) $html) ?? (string) $html;
+    $previewSrc = 'data:text/html;charset=utf-8;base64,'.base64_encode($previewHtml);
 @endphp
 
 <div class="space-y-4">
@@ -12,7 +13,7 @@
         <iframe
             class="h-[70vh] w-full rounded-lg"
             sandbox="allow-same-origin"
-            srcdoc="{{ e($previewHtml) }}"
+            src="{{ $previewSrc }}"
             title="Prévisualisation HTML du template"
         ></iframe>
     </div>
