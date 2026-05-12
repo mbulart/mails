@@ -9,15 +9,16 @@
     $previewSrc = 'data:text/html;charset=utf-8;base64,'.base64_encode($previewHtml);
 @endphp
 
-<div class="not-prose w-full max-w-none space-y-4">
+<div class="not-prose space-y-4" style="width: min(82vw, 1120px); max-width: calc(100vw - 4rem);">
     <div>
         <p class="text-sm text-gray-500">Sujet</p>
         <p class="font-medium">{{ $subject }}</p>
     </div>
 
-    <div class="w-full rounded-lg border border-gray-200 bg-white">
+    <div class="rounded-lg border border-gray-200 bg-white" style="width: 100%; max-width: none;">
         <iframe
-            class="block h-[70vh] w-full rounded-lg"
+            class="rounded-lg"
+            style="display: block; width: 100%; max-width: none; height: 70vh; border: 0;"
             sandbox="allow-same-origin allow-scripts"
             src="{{ $previewSrc }}"
             title="Prévisualisation HTML du template"
