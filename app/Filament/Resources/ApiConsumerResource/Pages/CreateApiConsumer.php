@@ -30,8 +30,8 @@ class CreateApiConsumer extends CreateRecord
         Notification::make()
             ->title('Clé API générée')
             ->body((string) $this->plainApiKey)
-                ->success()
-                ->persistent()
-                ->send();
-        }
+            ->success()
+            ->persistent()
+            ->send();
     }
+}
