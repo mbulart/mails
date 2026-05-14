@@ -420,7 +420,7 @@ class MailTemplateSeeder extends Seeder
                 <div class="wrapper">
                     <div class="card">
                         <div class="header">
-                            @if(filled($consumer_logo_url))
+                            @if(filled(\$consumer_logo_url))
                             <div class="consumer-logo">
                                 <img src="{{ consumer_logo_url }}" alt="" />
                             </div>
