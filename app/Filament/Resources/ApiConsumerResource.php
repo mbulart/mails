@@ -64,11 +64,17 @@ class ApiConsumerResource extends Resource
                         ->nullable(),
                 ]),
             Section::make('Sécurité API')
-                ->description('La clé complète est affichée uniquement à la création ou à la rotation.')
+                ->description('Création : laisser vide pour générer une clé. Édition : laisser vide pour garder la clé actuelle, ou saisir une clé complète pour la remplacer (ex. clé déjà utilisée ailleurs). La rotation génère toujours une nouvelle clé.')
                 ->icon('heroicon-o-shield-check')
                 ->columns(3)
                 ->schema([
-                    TextInput::make('api_key_plain')->label('Aperçu clé')->dehydrated(false),
+                    TextInput::make('new_api_key')
+                        ->label('Clé API (saisie manuelle)')
+                        ->password()
+                        ->revealable()
+                        ->maxLength(512)
+                        ->helperText('Optionnel. Ne pas remplir pour conserver ou auto-générer.')
+                        ->dehydrated(false),
                     TextInput::make('rate_limit')->label('Limite/minute')->numeric()->minValue(1)->default(100)->required(),
                     Toggle::make('is_active')->label('Actif')->default(true),
                 ]),

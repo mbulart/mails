@@ -15,6 +15,18 @@ class CreateApiConsumer extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $manual = trim((string) ($this->form->getState()['new_api_key'] ?? ''));
+
+        if (filled($manual)) {
+            $attrs = ApiConsumer::attributesFromPlainKey($manual);
+            $this->plainApiKey = $attrs['plain'];
+            $data['api_key_hash'] = $attrs['hash'];
+            $data['api_key_preview'] = $attrs['preview'];
+            $data['api_key_plain'] = $attrs['plain'];
+
+            return $data;
+        }
+
         $key = ApiConsumer::makeApiKey();
         $this->plainApiKey = $key['plain'];
 

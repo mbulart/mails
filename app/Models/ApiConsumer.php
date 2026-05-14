@@ -59,7 +59,28 @@ class ApiConsumer extends Model
         return [
             'plain' => $plain,
             'hash' => hash('sha256', $plain),
-            'preview' => substr($plain, 0, 8).'...',
+            'preview' => self::previewForPlainKey($plain),
+        ];
+    }
+
+    public static function previewForPlainKey(string $plain): string
+    {
+        $plain = trim($plain);
+
+        return (strlen($plain) > 8 ? substr($plain, 0, 8) : $plain).'...';
+    }
+
+    /**
+     * @return array{hash: string, preview: string, plain: string}
+     */
+    public static function attributesFromPlainKey(string $plain): array
+    {
+        $plain = trim($plain);
+
+        return [
+            'plain' => $plain,
+            'hash' => hash('sha256', $plain),
+            'preview' => self::previewForPlainKey($plain),
         ];
     }
 
@@ -78,13 +99,21 @@ class ApiConsumer extends Model
     {
         $key = self::makeApiKey();
 
+        $this->applyKeyAttributes($key);
+
+        return $key['plain'];
+    }
+
+    /**
+     * @param  array{hash: string, preview: string, plain: string}  $key
+     */
+    public function applyKeyAttributes(array $key): void
+    {
         $this->forceFill([
             'api_key_hash' => $key['hash'],
             'api_key_preview' => $key['preview'],
             'api_key_plain' => $key['plain'],
         ])->save();
-
-        return $key['plain'];
     }
 
     public function logs(): HasMany
