@@ -335,6 +335,19 @@ class MailTemplateSeeder extends Seeder
                         background: linear-gradient(135deg, #0f172a, #2563eb);
                         color: #ffffff;
                     }
+                    .consumer-logo {
+                        margin: 0 auto 16px;
+                        text-align: center;
+                    }
+                    .consumer-logo img {
+                        max-height: 48px;
+                        max-width: 220px;
+                        width: auto;
+                        height: auto;
+                        display: inline-block;
+                        border: 0;
+                        outline: none;
+                    }
                     .brand {
                         margin: 0 0 12px;
                         font-size: 13px;
@@ -407,6 +420,11 @@ class MailTemplateSeeder extends Seeder
                 <div class="wrapper">
                     <div class="card">
                         <div class="header">
+                            @if(filled($consumer_logo_url))
+                            <div class="consumer-logo">
+                                <img src="{{ consumer_logo_url }}" alt="" />
+                            </div>
+                            @endif
                             <p class="brand">{{app_name}}</p>
                             <h1>{$title}</h1>
                         </div>

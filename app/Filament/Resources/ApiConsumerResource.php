@@ -12,6 +12,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -20,6 +21,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
@@ -47,6 +49,19 @@ class ApiConsumerResource extends Resource
                 ->schema([
                     TextInput::make('name')->label('Nom')->required()->maxLength(255),
                     TextInput::make('email')->label('Email')->email()->required()->maxLength(255),
+                ]),
+            Section::make('Identité visuelle')
+                ->icon('heroicon-o-photo')
+                ->schema([
+                    FileUpload::make('logo_path')
+                        ->label('Logo')
+                        ->helperText('Optionnel. Affiché en en-tête des e-mails envoyés via ce consommateur lorsque le template prévoit un bloc logo.')
+                        ->image()
+                        ->disk('public')
+                        ->directory('consumer-logos')
+                        ->visibility('public')
+                        ->maxSize(2048)
+                        ->nullable(),
                 ]),
             Section::make('Sécurité API')
                 ->description('La clé complète est affichée uniquement à la création ou à la rotation.')
@@ -110,6 +125,11 @@ class ApiConsumerResource extends Resource
             ->columns([
                 TextColumn::make('name')->label('Nom')->searchable()->sortable(),
                 TextColumn::make('email')->label('Email')->searchable(),
+                ImageColumn::make('logo_path')
+                    ->label('Logo')
+                    ->disk('public')
+                    ->visibility('public')
+                    ->height(40),
                 TextColumn::make('api_key_plain')
                     ->label('Clé')
                     ->badge()

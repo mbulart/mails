@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ApiConsumer extends Model
@@ -28,6 +29,7 @@ class ApiConsumer extends Model
         'smtp_encryption',
         'smtp_from_address',
         'smtp_from_name',
+        'logo_path',
     ];
 
     protected function casts(): array
@@ -88,6 +90,40 @@ class ApiConsumer extends Model
     public function logs(): HasMany
     {
         return $this->hasMany(MailLog::class);
+    }
+
+    /**
+     * URL absolue du logo pour les clients email (null si absent).
+     */
+    public function logoPublicUrl(): ?string
+    {
+        if (blank($this->logo_path)) {
+            return null;
+        }
+
+        if (! Storage::disk('public')->exists($this->logo_path)) {
+            return null;
+        }
+
+        return url(Storage::disk('public')->url($this->logo_path));
+    }
+
+    protected static function booted(): void
+    {
+        static::updating(function (ApiConsumer $consumer): void {
+            if ($consumer->isDirty('logo_path')) {
+                $original = $consumer->getOriginal('logo_path');
+                if (filled($original) && $original !== $consumer->logo_path && Storage::disk('public')->exists($original)) {
+                    Storage::disk('public')->delete($original);
+                }
+            }
+        });
+
+        static::deleting(function (ApiConsumer $consumer): void {
+            if (filled($consumer->logo_path) && Storage::disk('public')->exists($consumer->logo_path)) {
+                Storage::disk('public')->delete($consumer->logo_path);
+            }
+        });
     }
 
     public function hasCustomSmtp(): bool

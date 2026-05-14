@@ -41,7 +41,10 @@ class MailTemplate extends Model
     public static function previewSampleVariables(?array $definition): array
     {
         if ($definition === null || $definition === []) {
-            return ['app_name' => 'Nom application'];
+            return [
+                'app_name' => 'Nom application',
+                'consumer_logo_url' => '',
+            ];
         }
 
         $samples = [];
@@ -69,6 +72,7 @@ class MailTemplate extends Model
         }
 
         $samples['app_name'] ??= 'Nom application';
+        $samples['consumer_logo_url'] ??= '';
 
         return $samples;
     }

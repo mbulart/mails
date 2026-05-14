@@ -49,6 +49,8 @@ class SendTemplatedMailAction
             $variables['app_name'] = $consumer->name;
         }
 
+        $variables['consumer_logo_url'] = $consumer?->logoPublicUrl() ?? '';
+
         $subject = app(TemplateRenderer::class)->render($template->subject, $variables);
         $logIds = [];
 
